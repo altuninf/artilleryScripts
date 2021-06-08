@@ -1,0 +1,82 @@
+config:
+  plugins: 
+    expect: {}
+  target: 'https://sample.com/api'
+  http:
+    pool: 1500
+    timeout: 20
+  variables: 
+    token: "123456789"
+  payload:
+    - path: "data1.csv"
+      fields:
+        - "id"
+        - "address"
+        - "name"
+      order: sequence
+      skipHeader: true
+      cast: false
+    - path: "data2.csv"
+      fields:
+        - "id"
+        - "address"
+        - "name"
+      order: sequence
+      skipHeader: true
+      cast: false
+    - path: "data3.csv"
+      fields:
+        - "id"
+        - "address"
+        - "name"
+      order: sequence
+      skipHeader: true
+      cast: false
+  phases:
+    - duration: 40
+      arrivalCount: 1000
+      name: "50 RPS"
+    - duration: 40
+      arrivalCount: 2000
+      name: "100 RPS"
+    - duration: 40
+      arrivalCount: 4000
+      name: "200 RPS"
+    - duration: 40
+      arrivalCount: 8000
+      name: "400 RPS"
+    - duration: 40
+      arrivalCount: 16000
+      name: "800 RPS"
+    - duration: 40
+      arrivalCount: 18000
+      name: "900 RPS"
+    - duration: 30
+      arrivalCount: 18000
+      name: "1200 RPS"
+    - duration: 50
+      arrivalCount: 40000
+      name: "1600 RPS"
+    - duration: 3262
+      arrivalCount: 4893000
+      name: "3000 RPS"
+scenarios:
+  - name: "Load test"
+    flow:
+      - post:
+          url: "/add"
+          headers: 
+            Content-Type: "application/json"
+            Authorization: "Bearer {{ token }}"
+          json:
+            userId: "{{ id }}"
+            address: "{{ address }}"
+            name: "{{ name }}"  
+      - post:
+          url: "/send"
+          headers: 
+            Content-Type: "application/json"
+            Authorization: "Bearer {{ token }}"
+          json:
+            address: "{{ address }}"
+            districtId: 27  
